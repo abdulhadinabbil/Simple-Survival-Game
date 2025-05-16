@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Simple Survival Game</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #333;
+    }
+    #gameArea {
+      width: 400px;
+      height: 600px;
+      margin: 0 auto;
+      position: relative;
+      background: #111;
+      border: 2px solid #fff;
+    }
+    .car {
+      width: 50px;
+      height: 100px;
+      background: red;
+      position: absolute;
+      bottom: 20px;
+      left: 175px;
+      border-radius: 10px;
+    }
+    .enemy {
+      width: 50px;
+      height: 100px;
+      background: yellow;
+      position: absolute;
+      top: -100px;
+      left: 0;
+      border-radius: 10px;
+    }
+    #score {
+      color: white;
+      text-align: center;
+      font-family: sans-serif;
+      font-size: 24px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="score">Score: 0</div>
+  <div id="gameArea">
+    <div class="car" id="player"></div>
+    <div class="enemy" id="enemy"></div>
+  </div>
+
+  <script>
+    const player = document.getElementById("player");
+    const enemy = document.getElementById("enemy");
+    const gameArea = document.getElementById("gameArea");
+    const scoreEl = document.getElementById("score");
+
+    let playerLeft = 175;
+    let enemyTop = -100;
+    let enemyLeft = Math.floor(Math.random() * 350);
+    let score = 0;
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft" && playerLeft > 0) {
+        playerLeft -= 25;
+      } else if (e.key === "ArrowRight" && playerLeft < 350) {
+        playerLeft += 25;
+      }
+      player.style.left = playerLeft + "px";
+    });
+
+    function moveEnemy() {
+      enemyTop += 5;
+      if (enemyTop > 600) {
+        enemyTop = -100;
+        enemyLeft = Math.floor(Math.random() * 350);
+        score++;
+        scoreEl.textContent = "Score: " + score;
+      }
+
+      enemy.style.top = enemyTop + "px";
+      enemy.style.left = enemyLeft + "px";
+
+      if (checkCollision()) {
+        alert("Game Over! Final Score: " + score);
+        location.reload();
+      }
+
+      requestAnimationFrame(moveEnemy);
+    }
+
+    function checkCollision() {
+      const playerRect = player.getBoundingClientRect();
+      const enemyRect = enemy.getBoundingClientRect();
+      return !(
+        playerRect.top > enemyRect.bottom ||
+        playerRect.bottom < enemyRect.top ||
+        playerRect.right < enemyRect.left ||
+        playerRect.left > enemyRect.right
+      );
+    }
+
+    moveEnemy();
+  </script>
+</body>
+</html>
